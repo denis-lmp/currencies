@@ -6,7 +6,7 @@ This is a simple application the shows api functionality as a currencies' resour
 - Run `make install`
     - It will install composer dependencies, run migration, seeders, build frontend
     - It will also parse all the data about banks and banks branches, currency rates.
-- Visit page: `http://localhost`
+- Visit page: `http://localhost` and continue to registration/login process.
 
 ## API endpoints:
 1. Отримання списку банків, а також інформації про них (назва, логотип, рейтинг, номер телефону, електронна пошта)
@@ -60,10 +60,12 @@ This is a simple application the shows api functionality as a currencies' resour
 - Додати можливість отримувати історію суттєвих змін протягом визначеного періоду
   (Add the ability to receive a history of significant changes during a specified period)
 
+    To see Currency Changes probably need to run `php artisan currency:update` a couple of times or `make currency-update` to get more changes.
   On `http://localhost/dashboard` you can switch between currencies and dates from, to get changes in rate.
 
 
 - Main files are:
+  - `Makefile`
   - `app/Http/Controllers/BankBranchController.php`
   - `app/Http/Controllers/BankController.php`
   - `app/Http/Controllers/CurrencyController.php`

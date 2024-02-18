@@ -36,9 +36,8 @@
                                 <input type="date" id="endDate" name="endDate" value="{{ old('endDate') }}">
                             </div>
                         </div><br><br>
-
-                        <button type="submit">Submit</button>
                     </form>
+                    <label for="historicalChangesResult"><b>Currency Changes:</b></label>
                     <div id="historicalChangesResult">
                         @if($historicalChanges)
                             @foreach($historicalChanges as $change)
