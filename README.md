@@ -1,66 +1,76 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+### Currencies API
+This is a simple application the shows api functionality as a currencies' resource.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## To run the local dev environment:
+- Navigate to `project` folder
+- Run `make install`
+    - It will install composer dependencies, run migration, seeders, build frontend
+    - It will also parse all the data about banks and banks branches, currency rates.
+- Visit page: `http://localhost`
 
-## About Laravel
+## API endpoints:
+1. Отримання списку банків, а також інформації про них (назва, логотип, рейтинг, номер телефону, електронна пошта)
+   (Obtaining a list of banks, as well as information about them (name, logo, rating, phone number, e-mail))
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+    http://localhost/api/banks
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+    During the installation process it will parse all the banks and banks branches. Set up all the banks that are used for test in `allowed_banks` section in `config/banking.php` file.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+2. Отримання всієї інформації про конкретний банк з поточними курсами валют та списком відділень
+   (Obtaining all information about a specific bank with current exchange rates and a list of branches)
 
-## Learning Laravel
+   http://localhost/api/bank/{bank_slug}
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+3. Отримання найближчих відділень банків в залежності від місцезнаходження користувача
+   (Obtaining the nearest bank branches depending on the user's location) 
+   Need to provide latitude and longitude in the request.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+   Example: http://localhost/api/closest-branches?latitude=48.4621809&longitude=34.8355501
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-## Laravel Sponsors
+4. Отримання списку валют (Getting a list of currencies)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+   http://localhost/api/currencies
 
-### Premium Partners
+5. Отримання актуального списку курсів валют з можливістю фільтрації даних за конкретними банками та валютами
+   (Obtaining an up-to-date list of exchange rates with the ability to filter data by specific banks and currencies)
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+    http://localhost/api/currency-rates?bank=privatbank&currency=EUR
 
-## Contributing
+6. Отримання актуального курсу валют НБУ та середнього курсу по всіх банках 
+   (Obtaining the current exchange rate of the NBU and the average exchange rate for all banks)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    http://localhost/api/average-rate?currency=USD
 
-## Code of Conduct
+**Розширений функціонал (Additional Functionality)**
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. Обліковий запис (Account)
 
-## Security Vulnerabilities
+- Реєстрація та аутентифікація користувачів (User registration and authentication)
+- Можливість редагування даних облікового запису (Ability to edit account data)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+2. Історія змін курсів валют (History of exchange rate changes)
 
-## License
+- Реалізувати механізм збору історії про суттєві зміни в курсах валют (наприклад, 5%)
+  (Implement a mechanism for collecting history of significant changes in exchange rates (for example, 5%))
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+    All the logic in the `app/Console/Commands/UpdateCurrencyRates.php`
+    There is a method `checkCurrencyRateChanges()` that checks saves the significant change to `currency_rates_changes` table if change exceeds 5%
+
+- Додати можливість отримувати історію суттєвих змін протягом визначеного періоду
+  (Add the ability to receive a history of significant changes during a specified period)
+
+  On `http://localhost/dashboard` you can switch between currencies and dates from, to get changes in rate.
+
+
+- Main files are:
+  - `app/Http/Controllers/BankBranchController.php`
+  - `app/Http/Controllers/BankController.php`
+  - `app/Http/Controllers/CurrencyController.php`
+  - `app/Http/Controllers/CurrencyHistoryController.php`
+
+  - `app/Console/Commands/UpdateCurrencyRates.php` is set up to run every hour in `app/Console/Kernel.php` to get new currency rates.
+  - `app/Console/Commands/UpdateBankBranches.php` is set up to run every day in `app/Console/Kernel.php` to update bank branches.
+
+  -  `app/Services/BankingAPIService.php` it's a service to make http requests to pull all the data into database about banks, currencies and banks branches.
+  - Repository files are in the `app/Repositories` that have all the business logic.
