@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Currency;
-use App\Repositories\CurrencyRepository;
+use App\Repositories\CurrencyRateRepository;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -12,15 +12,14 @@ use Illuminate\View\View;
 
 class CurrencyHistoryController extends Controller
 {
+    protected CurrencyRateRepository $currencyRateRepository;
 
-    protected CurrencyRepository $currencyRepository;
-
-    public function __construct(CurrencyRepository $currencyRepository)
+    public function __construct(CurrencyRateRepository $currencyRateRepository)
     {
-        $this->currencyRepository = $currencyRepository;
+        $this->currencyRateRepository = $currencyRateRepository;
     }
 
-    public function index(Request $request, CurrencyRepository $currencyRepository): View
+    public function index(Request $request): View
     {
         $currencyCode = $request->input('currencyCode', 'USD');
         $startDate    = $request->input('startDate', Carbon::now()->startOfDay());
@@ -29,7 +28,7 @@ class CurrencyHistoryController extends Controller
         $userInfo   = Auth::user();
         $currencies = Currency::all();
 
-        $historicalChanges = $currencyRepository->getHistoricalChanges($currencyCode, $startDate, $endDate);
+        $historicalChanges = $this->currencyRateRepository->getHistoricalChanges($currencyCode, $startDate, $endDate);
 
         return view('currency.home', [
             'currencies' => $currencies,
@@ -38,13 +37,13 @@ class CurrencyHistoryController extends Controller
         ]);
     }
 
-    public function getHistoricalChanges(Request $request, CurrencyRepository $currencyRepository): Collection|array
+    public function getHistoricalChanges(Request $request): Collection|array
     {
         $currencyCode = $request->input('currencyCode', 'USD');
         $startDate    = $request->input('startDate', Carbon::now()->startOfDay());
         $endDate      = $request->input('endDate', Carbon::now()->endOfDay());
 
-        return $currencyRepository->getHistoricalChanges($currencyCode, $startDate, $endDate);
+        return $this->currencyRateRepository->getHistoricalChanges($currencyCode, $startDate, $endDate);
     }
 
 }

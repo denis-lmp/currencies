@@ -25,7 +25,7 @@ Route::get('/currencies', [CurrencyController::class, 'index']);
 Route::get('/banks', [BankController::class, 'index']);
 Route::get('/branches', [BankBranchController::class, 'index']);
 
-Route::get('bank/{slug}', [BankController::class, 'showBySlug']);
+Route::get('bank/{slug}', [BankController::class, 'getBankBySlug']);
 Route::get('/closest-branches', [BankController::class, 'getClosestBranches']);
-Route::get('/currency-rates', [CurrencyController::class, 'currencyRates']);
-Route::get('/average-rate', [CurrencyController::class, 'averageExchangeRate']);
+Route::get('/currency-rates', [CurrencyController::class, 'getCurrencyRates']);
+Route::get('/average-rate', [CurrencyController::class, 'getAverageExchangeRate']);

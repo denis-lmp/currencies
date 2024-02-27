@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\BankBranchRepository;
 use App\Repositories\BankRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -9,10 +10,12 @@ use Illuminate\Http\Request;
 class BankController extends Controller
 {
     protected BankRepository $bankRepository;
+    protected BankBranchRepository $bankBranchRepository;
 
-    public function __construct(BankRepository $bankRepository)
+    public function __construct(BankRepository $bankRepository, BankBranchRepository $bankBranchRepository)
     {
         $this->bankRepository = $bankRepository;
+        $this->bankBranchRepository = $bankBranchRepository;
     }
 
     public function index(): JsonResponse
@@ -24,7 +27,7 @@ class BankController extends Controller
         return response()->json($data, 200, $headers, JSON_UNESCAPED_UNICODE);
     }
 
-    public function showBySlug($slug): JsonResponse
+    public function getBankBySlug($slug): JsonResponse
     {
         $data = $this->bankRepository->findBySlugWithCurrenciesAndBranches($slug);
 
@@ -51,7 +54,7 @@ class BankController extends Controller
         $userLatitude  = $request->input('latitude');
         $userLongitude = $request->input('longitude');
 
-        $data = $this->bankRepository->findClosestBranchesByCoordinates($userLatitude, $userLongitude);
+        $data = $this->bankBranchRepository->findClosestBranchesByCoordinates($userLatitude, $userLongitude);
 
         $headers = ['Content-Type' => 'application/json; charset=utf-8'];
 
