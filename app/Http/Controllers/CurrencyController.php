@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\CurrencyRateRepository;
 use App\Repositories\CurrencyRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -9,10 +10,12 @@ use Illuminate\Http\Request;
 class CurrencyController extends Controller
 {
     protected CurrencyRepository $currencyRepository;
+    protected CurrencyRateRepository $currencyRateRepository;
 
-    public function __construct(CurrencyRepository $currencyRepository)
+    public function __construct(CurrencyRepository $currencyRepository, CurrencyRateRepository $currencyRateRepository)
     {
         $this->currencyRepository = $currencyRepository;
+        $this->currencyRateRepository = $currencyRateRepository;
     }
 
     public function index(): JsonResponse
@@ -22,21 +25,21 @@ class CurrencyController extends Controller
         return response()->json($data);
     }
 
-    public function currencyRates(Request $request): JsonResponse
+    public function getCurrencyRates(Request $request): JsonResponse
     {
         $bankSlug     = $request->input('bank');
         $currencyCode = $request->input('currency');
 
-        $data = $this->currencyRepository->getCurrencyRates($bankSlug, $currencyCode);
+        $data = $this->currencyRateRepository->getCurrencyRates($bankSlug, $currencyCode);
 
         return response()->json($data);
     }
 
-    public function averageExchangeRate(Request $request): JsonResponse
+    public function getAverageExchangeRate(Request $request): JsonResponse
     {
         $currencyCode = $request->input('currency');
 
-        $data = $this->currencyRepository->getNBUAndAverageExchangeRate($currencyCode);
+        $data = $this->currencyRateRepository->getNBUAndAverageExchangeRate($currencyCode);
 
         return response()->json($data);
     }

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Bank;
-use App\Repositories\BankRepository;
 use App\Services\BankingAPIService;
 use Illuminate\Database\Seeder;
 

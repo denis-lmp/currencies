@@ -5,8 +5,9 @@ namespace App\Console\Commands;
 use App\Models\CurrencyRate;
 use App\Models\CurrencyRatesChange;
 use App\Repositories\BankRepository;
+use App\Repositories\CurrencyRateRepository;
 use App\Repositories\CurrencyRepository;
-use App\Services\BankingAPIService;
+use App\Services\CurrencyRateService;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -28,18 +29,21 @@ class UpdateCurrencyRates extends Command
     protected $description = 'Update currency rates.';
 
     protected CurrencyRepository $currencyRepository;
+    protected CurrencyRateRepository $currencyRateRepository;
     protected BankRepository $bankRepository;
-    protected BankingAPIService $bankingAPIService;
+    protected CurrencyRateService $currencyRateService;
 
     public function __construct(
         CurrencyRepository $currencyRepository,
         BankRepository $bankRepository,
-        BankingAPIService $bankingAPIService
+        CurrencyRateService $currencyRateService,
+        CurrencyRateRepository $currencyRateRepository
     ) {
         parent::__construct();
-        $this->currencyRepository = $currencyRepository;
-        $this->bankRepository     = $bankRepository;
-        $this->bankingAPIService  = $bankingAPIService;
+        $this->currencyRepository  = $currencyRepository;
+        $this->bankRepository      = $bankRepository;
+        $this->currencyRateService = $currencyRateService;
+        $this->currencyRateRepository = $currencyRateRepository;
     }
 
     public function handle(): void
@@ -61,7 +65,7 @@ class UpdateCurrencyRates extends Command
 
     protected function updateCurrencyRatesNbu(Collection $currencies): void
     {
-        $ratesNbu = $this->bankingAPIService->getCurrencyRatesNbu();
+        $ratesNbu = $this->currencyRateService->getCurrencyRatesNbu();
 
         foreach ($ratesNbu as $item) {
             $currency = $currencies->firstWhere('code', $item['cc']);
@@ -86,7 +90,7 @@ class UpdateCurrencyRates extends Command
         foreach ($currencies as $currency) {
             $currencyId   = $currency->id;
             $currencyCode = $currency->code;
-            $rates        = $this->bankingAPIService->getCurrencyRates($currencyCode);
+            $rates        = $this->currencyRateService->getCurrencyRates($currencyCode);
 
             foreach ($rates['data'] as $currencyRaw) {
                 $bank = $banks->firstWhere('slug', $currencyRaw['slug']);
@@ -108,7 +112,7 @@ class UpdateCurrencyRates extends Command
     protected function checkCurrencyRateChanges(): void
     {
         // Get all currency rates
-        $currencyRates = CurrencyRate::all();
+        $currencyRates = $this->currencyRateRepository->all();
 
         // Iterate through each currency rate
         foreach ($currencyRates as $currencyRate) {

@@ -42,11 +42,6 @@ class BankingAPIService
         return $response->successful() ? $response->json() : null;
     }
 
-    public function getCurrencyRatesNbu(): ?array
-    {
-        return $this->getHttpRequest($this->exchangeRatesNbuUrl);
-    }
-
     public function getBanksInfo(): ?array
     {
         $response = $this->getHttpRequest($this->banksListUrl);
